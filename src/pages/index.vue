@@ -1,23 +1,31 @@
 <template>
   <div class="container index">
     <p>点击地名以更换城市</p>
-    <navigator class="location" url="./switchcity">{{ location }}{{ county }}</navigator>
+    <navigator class="location" url="./switchcity">{{ defaultCity }}{{ defaultCounty }}</navigator>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
+import { CITY_GET_LOCATION } from '../store/mutation-types';
 export default {
+  computed: {
+    ...mapGetters('city', {
+      defaultCity: 'defaultCity',
+      defaultCounty: 'defaultCounty'
+    })
+  },
   data() {
     return {
-      location: '城市',
-      county: '区县'
     };
   },
+  created() {
+    this.getLocation();
+  },
   methods: {
-    created() {
-      console.log(this.$store);
-      console.log('asdfasdfasdfa');
-    }
+    ...mapActions('city', {
+      'getLocation': CITY_GET_LOCATION
+    })
   }
 };
 </script>
