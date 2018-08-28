@@ -22,8 +22,6 @@ const getters = {
 const mutations = {
   // 设置当前城市信息
   [CITY_GET_LOCATION](state, payload) {
-    console.log(CITY_GET_LOCATION);
-    console.log(payload);
     state.city = payload.city;
     state.county = payload.county;
     state.currentCityCode = payload.currentCityCode;
@@ -44,14 +42,12 @@ const mutations = {
     state.county = payload.county;
     state.defaultCity = state.city;
     state.defaultCounty = state.county;
-    console.log('now state ---> :', state);
   }
 };
 
 const actions = {
   // 获取当前定位 城市 区
   [CITY_GET_LOCATION]({commit, dispatch}) {
-    console.log('actions get location');
     wx.getLocation({
       type: 'wgs84',
       success: function(res) {
@@ -66,7 +62,6 @@ const actions = {
               currentCityCode: res.data.result.ad_info.adcode,
               county: res.data.result.ad_info.district
             });
-            console.log(res);
           }
         });
       }
@@ -76,7 +71,6 @@ const actions = {
   [CITY_SELECT_COUNTY]({ commit, state }) {
     console.log('正在定位区县');
     let code = state.currentCityCode;
-    console.log('city code ----> ', code);
     wx.request({
       url: `https://apis.map.qq.com/ws/district/v1/getchildren?&id=${code}&key=${config.key}`,
       success: function(res) {

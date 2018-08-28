@@ -129,7 +129,6 @@ export default {
     const sysInfo = wx.getSystemInfoSync();
     console.log(sysInfo);
     const winHeight = sysInfo.windowHeight;
-    console.log(winHeight);
     const itemH = winHeight / searchLetter.length;
     let tempArr = [];
 
@@ -142,8 +141,6 @@ export default {
         tempArr.push(temp);
       }
     );
-
-    console.log(tempArr);
 
     this.winHeight = winHeight;
     this.itemH = itemH;
@@ -160,7 +157,6 @@ export default {
       'changeCounty': CITY_CHANGE_COUNTY
     }),
     clickLetter(e) {
-      console.log(e.currentTarget.dataset.letter);
       const showLetter = e.currentTarget.dataset.letter;
       this.toastShowLetter = showLetter;
       this.isShowLetter = true;
@@ -187,7 +183,6 @@ export default {
       this.selectCounty();
     },
     bindCounty(e) {
-      console.log(e);
       this.county = e.currentTarget.dataset.city;
       this.changeCounty({
         county: e.currentTarget.dataset.city
@@ -197,7 +192,6 @@ export default {
       });
     },
     hotCity() {
-      console.log('hotCity');
       this.scrollTopId = 'currentcity';
     },
     bindScroll(e) {
@@ -208,7 +202,6 @@ export default {
     },
     bindKeyInput(e) {
       this.inputName = e.mp.detail.value;
-      console.log(this.inputName);
       // 空搜索框时 取消匹配显示
       if (this.inputName.length < 1) {
         this.completeList = [];
