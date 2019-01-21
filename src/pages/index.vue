@@ -1,7 +1,7 @@
 <template>
   <div class="container index">
     <p>点击地名以更换城市</p>
-    <navigator class="location" url="./switchcity">{{ defaultCity }}{{ defaultCounty }}</navigator>
+    <navigator class="location" url="./switch-city">{{ defaultCity }}{{ defaultCounty }}</navigator>
   </div>
 </template>
 

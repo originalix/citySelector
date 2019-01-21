@@ -130,6 +130,7 @@ export default {
     };
   },
   created() {
+    console.log(this.mapKey);
     const searchLetter = city.searchLetter;
     const cityList = city.cityList();
     const sysInfo = wx.getSystemInfoSync();
@@ -179,6 +180,7 @@ export default {
               //   currentCityCode: res.data.result.ad_info.adcode,
               //   county: res.data.result.ad_info.district
               // });
+              console.log(res);
               self.city = res.data.result.ad_info.city;
               self.code = res.data.result.ad_info.adcode;
               self.county = res.data.result.ad_info.district;
@@ -220,15 +222,18 @@ export default {
       }, 500);
     },
     reGetLocation() {
+      this.countyList = [];
       this.getLocation();
     },
     // 选择城市
     bindCity(e) {
       this.condition = true;
-      this.changeCity({
-        city: e.currentTarget.dataset.city,
-        code: e.currentTarget.dataset.code
-      });
+      // this.changeCity({
+      //   city: e.currentTarget.dataset.city,
+      //   code: e.currentTarget.dataset.code
+      // });
+      this.city = e.currentTarget.dataset.city;
+      this.code = e.currentTarget.dataset.code;
       this.scrollTopId = 'selectcounty';
       this.completeList = [];
 
@@ -236,9 +241,10 @@ export default {
     },
     bindCounty(e) {
       this.county = e.currentTarget.dataset.city;
-      this.changeCounty({
-        county: e.currentTarget.dataset.city
-      });
+      // this.changeCounty({
+      //   county: e.currentTarget.dataset.city
+      // });
+      this.county = e.currentTarget.dataset.city;
       wx.switchTab({
         url: '/pages/index'
       });

@@ -10,5 +10,11 @@ module.exports = [
     config: {
       navigationBarTitleText: '选择城市'
     }
+  },
+  {
+    path: 'pages/switch-city',
+    config: {
+      navigationBarTitleText: '选择城市1'
+    }
   }
 ];
