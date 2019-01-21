@@ -44,37 +44,9 @@
             <div class="thisCityName" :data-city="city" :data-code="currentCityCode">{{ city }}</div>
 
             <div class="hotcity-common">热门城市</div>
-            <div class="weui-grids">
-              <div class="weui-grid" :data-code="110000" data-city="北京市" @click="bindCity">
-                <div class="weui-grid__label">北京市</div>
-              </div>
-              <div class="weui-grid" :data-code="310000" data-city="上海市" @click="bindCity">
-                <div class="weui-grid__label">上海市</div>
-              </div>
-              <div class="weui-grid" :data-code="440100" data-city="广州市" @click="bindCity">
-                <div class="weui-grid__label">广州市</div>
-              </div>
-            </div>
-            <div class="weui-grids">
-              <div class="weui-grid" :data-code="440300" data-city="深圳市" @click="bindCity">
-                <div class="weui-grid__label">深圳市</div>
-              </div>
-              <div class="weui-grid" :data-code="330100" data-city="杭州市" @click="bindCity">
-                <div class="weui-grid__label">杭州市</div>
-              </div>
-              <div class="weui-grid" :data-code="320100" data-city="南京市" @click="bindCity">
-                <div class="weui-grid__label">南京市</div>
-              </div>
-            </div>
-            <div class="weui-grids">
-              <div class="weui-grid" :data-code="420100" data-city="武汉市" @click="bindCity">
-                <div class="weui-grid__label">武汉市</div>
-              </div>
-              <div class="weui-grid" :data-code="120000" data-city="天津市" @click="bindCity">
-                <div class="weui-grid__label">天津市</div>
-              </div>
-              <div class="weui-grid" :data-code="610100" data-city="西安市" @click="bindCity">
-                <div class="weui-grid__label">西安市</div>
+            <div class="weui-grids" v-for="(cityList, idx) in hotCityList" :key="idx">
+              <div class="weui-grid" :data-code="cityItem.code" :data-city="cityItem.city" @click="bindCity" v-for="cityItem in cityList" :key="cityItem.code">
+                <div class="weui-grid__label">{{ cityItem.city }}</div>
               </div>
             </div>
           </div>
@@ -93,21 +65,27 @@
 
 <script>
 import city from '../utils/city.js';
-import { CITY_GET_LOCATION, CITY_SELECT_COUNTY, CITY_CHANGE_CODE, CITY_CHANGE_COUNTY } from '../store/mutation-types';
-import { mapActions, mapGetters } from 'vuex';
 export default {
-  computed: {
-    ...mapGetters('city', {
-      city: 'city',
-      county: 'county',
-      currentCityCode: 'currentCityCode',
-      defaultCity: 'defaultCity',
-      defaultCounty: 'defaultCounty',
-      countyList: 'countyList'
-    })
+  props: {
+    mapKey: null,
+    hotCityList: []
   },
+  // computed: {
+  //   ...mapGetters('city', {
+  //     city: 'city',
+  //     county: 'county',
+  //     currentCityCode: 'currentCityCode',
+  //     defaultCity: 'defaultCity',
+  //     defaultCounty: 'defaultCounty',
+  //     countyList: 'countyList'
+  //   })
+  // },
   data() {
     return {
+      city: '定位中',
+      county: '',
+      code: '',
+      countyList: [],
       searchLetter: [],
       showLetter: '',
       winHeight: 0,
@@ -115,7 +93,7 @@ export default {
       isShowLetter: false,
       // 置顶id
       scrollTopId: '',
-      hotcityList: [],
+      // hotcityList: [],
       inputName: '',
       completeList: [],
       condition: false,
@@ -124,6 +102,8 @@ export default {
     };
   },
   created() {
+    console.log(this.mapKey);
+    console.log(this.hotCityList);
     const searchLetter = city.searchLetter;
     const cityList = city.cityList();
     const sysInfo = wx.getSystemInfoSync();
@@ -150,12 +130,59 @@ export default {
     this.getLocation();
   },
   methods: {
-    ...mapActions('city', {
-      'getLocation': CITY_GET_LOCATION,
-      'selectCounty': CITY_SELECT_COUNTY,
-      'changeCity': CITY_CHANGE_CODE,
-      'changeCounty': CITY_CHANGE_COUNTY
-    }),
+    // ...mapActions('city', {
+    //   'getLocation': CITY_GET_LOCATION,
+    //   'selectCounty': CITY_SELECT_COUNTY,
+    //   'changeCity': CITY_CHANGE_CODE,
+    //   'changeCounty': CITY_CHANGE_COUNTY
+    // }),
+    getLocation() {
+      const mapKey = this.mapKey;
+      const self = this;
+      wx.getLocation({
+        type: 'wgs84',
+        success: function(res) {
+          let latitude = res.latitude;
+          let longitude = res.longitude;
+          wx.request({
+            url: `https://apis.map.qq.com/ws/geocoder/v1/?location=${latitude},${longitude}&key=${mapKey}`,
+            success: res => {
+              // commit({
+              //   type: CITY_GET_LOCATION,
+              //   city: res.data.result.ad_info.city,
+              //   currentCityCode: res.data.result.ad_info.adcode,
+              //   county: res.data.result.ad_info.district
+              // });
+              console.log(res);
+              self.city = res.data.result.ad_info.city;
+              self.code = res.data.result.ad_info.adcode;
+              self.county = res.data.result.ad_info.district;
+            }
+          });
+        }
+      });
+    },
+    selectCounty() {
+      console.log('正在定位区县');
+      // let code = state.currentCityCode;
+      let code = this.code;
+      const self = this;
+      wx.request({
+        url: `https://apis.map.qq.com/ws/district/v1/getchildren?&id=${code}&key=${this.mapKey}`,
+        success: function(res) {
+          // commit({
+          //   type: CITY_SELECT_COUNTY,
+          //   list: res.data.result[0]
+          // });
+          self.countyList = res.data.result[0];
+          console.log(res.data);
+          console.log('请求区县成功' + `https://apis.map.qq.com/ws/district/v1/getchildren?&id=${code}&key=${self.mapKey}`);
+        },
+        fail: function() {
+          console.log('请求区县失败，请重试');
+        }
+      });
+    },
     clickLetter(e) {
       const showLetter = e.currentTarget.dataset.letter;
       this.toastShowLetter = showLetter;
@@ -168,15 +195,18 @@ export default {
       }, 500);
     },
     reGetLocation() {
+      this.countyList = [];
       this.getLocation();
     },
     // 选择城市
     bindCity(e) {
       this.condition = true;
-      this.changeCity({
-        city: e.currentTarget.dataset.city,
-        code: e.currentTarget.dataset.code
-      });
+      // this.changeCity({
+      //   city: e.currentTarget.dataset.city,
+      //   code: e.currentTarget.dataset.code
+      // });
+      this.city = e.currentTarget.dataset.city;
+      this.code = e.currentTarget.dataset.code;
       this.scrollTopId = 'selectcounty';
       this.completeList = [];
 
@@ -184,9 +214,10 @@ export default {
     },
     bindCounty(e) {
       this.county = e.currentTarget.dataset.city;
-      this.changeCounty({
-        county: e.currentTarget.dataset.city
-      });
+      // this.changeCounty({
+      //   county: e.currentTarget.dataset.city
+      // });
+      this.county = e.currentTarget.dataset.city;
       wx.switchTab({
         url: '/pages/index'
       });

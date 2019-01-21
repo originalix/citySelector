@@ -5,14 +5,14 @@ module.exports = [
       navigationBarTitleText: '首页'
     }
   },
+  // {
+  //   path: 'pages/switchcity',
+  //   config: {
+  //     navigationBarTitleText: '选择城市'
+  //   }
+  // },
   {
-    path: 'pages/switchcity',
-    config: {
-      navigationBarTitleText: '选择城市'
-    }
-  },
-  {
-    path: 'pages/switch-city',
+    path: 'pages/CityPage',
     config: {
       navigationBarTitleText: '选择城市1'
     }
