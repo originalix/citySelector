@@ -41,7 +41,7 @@
 
           <div class="selectCity">
             <div class="hotcity-common" @click="reGetLocation" id="currentcity">重新定位城区</div>
-            <div class="thisCityName" :data-city="city" :data-code="currentCityCode">{{ city }}</div>
+            <div class="thisCityName" :data-city="city" :data-code="code">{{ city }}</div>
 
             <div class="hotcity-common">热门城市</div>
             <div class="weui-grids" v-for="(cityList, idx) in hotCityList" :key="idx">
@@ -70,16 +70,6 @@ export default {
     mapKey: null,
     hotCityList: []
   },
-  // computed: {
-  //   ...mapGetters('city', {
-  //     city: 'city',
-  //     county: 'county',
-  //     currentCityCode: 'currentCityCode',
-  //     defaultCity: 'defaultCity',
-  //     defaultCounty: 'defaultCounty',
-  //     countyList: 'countyList'
-  //   })
-  // },
   data() {
     return {
       city: '定位中',
@@ -93,7 +83,6 @@ export default {
       isShowLetter: false,
       // 置顶id
       scrollTopId: '',
-      // hotcityList: [],
       inputName: '',
       completeList: [],
       condition: false,
@@ -130,12 +119,6 @@ export default {
     this.getLocation();
   },
   methods: {
-    // ...mapActions('city', {
-    //   'getLocation': CITY_GET_LOCATION,
-    //   'selectCounty': CITY_SELECT_COUNTY,
-    //   'changeCity': CITY_CHANGE_CODE,
-    //   'changeCounty': CITY_CHANGE_COUNTY
-    // }),
     getLocation() {
       const mapKey = this.mapKey;
       const self = this;
@@ -147,16 +130,14 @@ export default {
           wx.request({
             url: `https://apis.map.qq.com/ws/geocoder/v1/?location=${latitude},${longitude}&key=${mapKey}`,
             success: res => {
-              // commit({
-              //   type: CITY_GET_LOCATION,
-              //   city: res.data.result.ad_info.city,
-              //   currentCityCode: res.data.result.ad_info.adcode,
-              //   county: res.data.result.ad_info.district
-              // });
               console.log(res);
               self.city = res.data.result.ad_info.city;
               self.code = res.data.result.ad_info.adcode;
               self.county = res.data.result.ad_info.district;
+              self.$emit('bindCity', {
+                city: self.city,
+                code: self.code
+              });
             }
           });
         }
@@ -164,16 +145,11 @@ export default {
     },
     selectCounty() {
       console.log('正在定位区县');
-      // let code = state.currentCityCode;
       let code = this.code;
       const self = this;
       wx.request({
         url: `https://apis.map.qq.com/ws/district/v1/getchildren?&id=${code}&key=${this.mapKey}`,
         success: function(res) {
-          // commit({
-          //   type: CITY_SELECT_COUNTY,
-          //   list: res.data.result[0]
-          // });
           self.countyList = res.data.result[0];
           console.log(res.data);
           console.log('请求区县成功' + `https://apis.map.qq.com/ws/district/v1/getchildren?&id=${code}&key=${self.mapKey}`);
@@ -201,25 +177,27 @@ export default {
     // 选择城市
     bindCity(e) {
       this.condition = true;
-      // this.changeCity({
-      //   city: e.currentTarget.dataset.city,
-      //   code: e.currentTarget.dataset.code
-      // });
+
       this.city = e.currentTarget.dataset.city;
       this.code = e.currentTarget.dataset.code;
       this.scrollTopId = 'selectcounty';
       this.completeList = [];
 
+      this.$emit('bindCity', {
+        city: this.city,
+        code: this.code
+      });
+
       this.selectCounty();
     },
     bindCounty(e) {
       this.county = e.currentTarget.dataset.city;
-      // this.changeCounty({
-      //   county: e.currentTarget.dataset.city
-      // });
-      this.county = e.currentTarget.dataset.city;
-      wx.switchTab({
-        url: '/pages/index'
+      const countyCode = e.mp.currentTarget.dataset.code;
+
+      this.$emit('bindCounty', {
+        city: this.city,
+        code: countyCode,
+        county: this.county
       });
     },
     hotCity() {

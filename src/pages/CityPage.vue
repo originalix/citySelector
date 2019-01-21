@@ -3,6 +3,8 @@
     <SwitchCity
       :mapKey="mapKey"
       :hotCityList="hotCityList"
+      @bindCity="bindCity"
+      @bindCounty="bindCounty"
     />
   </div>
 </template>
@@ -37,6 +39,17 @@ export default {
   },
   components: {
     SwitchCity: SwitchCity
+  },
+  methods: {
+    bindCity(e) {
+      console.log(e);
+    },
+    bindCounty(e) {
+      console.log(e);
+      wx.switchTab({
+        url: '/pages/index'
+      });
+    }
   }
 };
 </script>
