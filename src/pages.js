@@ -5,12 +5,6 @@ module.exports = [
       navigationBarTitleText: '首页'
     }
   },
-  // {
-  //   path: 'pages/switchcity',
-  //   config: {
-  //     navigationBarTitleText: '选择城市'
-  //   }
-  // },
   {
     path: 'pages/CityPage',
     config: {
