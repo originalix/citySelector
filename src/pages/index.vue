@@ -1,31 +1,22 @@
 <template>
   <div class="container index">
     <p>点击地名以更换城市</p>
-    <navigator class="location" url="./CityPage">{{ defaultCity }}{{ defaultCounty }}</navigator>
+    <navigator class="location" url="./CityPage">{{ cityInfo }}</navigator>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
-import { CITY_GET_LOCATION } from '../store/mutation-types';
 export default {
-  computed: {
-    ...mapGetters('city', {
-      defaultCity: 'defaultCity',
-      defaultCounty: 'defaultCounty'
-    })
+  onShow() {
+    const data = wx.getStorageSync('CITY_INFO');
+    if (data) {
+      this.cityInfo = `${data.city}${data.county}`;
+    }
   },
   data() {
     return {
+      cityInfo: '暂无选择'
     };
-  },
-  created() {
-    this.getLocation();
-  },
-  methods: {
-    ...mapActions('city', {
-      'getLocation': CITY_GET_LOCATION
-    })
   }
 };
 </script>

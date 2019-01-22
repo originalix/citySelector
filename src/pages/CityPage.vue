@@ -42,10 +42,13 @@ export default {
   },
   methods: {
     bindCity(e) {
-      console.log(e);
+      // TODO: 选择城市之后的逻辑事件
     },
     bindCounty(e) {
-      console.log(e);
+      wx.setStorage({
+        key: 'CITY_INFO',
+        data: e
+      });
       wx.switchTab({
         url: '/pages/index'
       });

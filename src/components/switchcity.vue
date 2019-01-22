@@ -130,7 +130,6 @@ export default {
           wx.request({
             url: `https://apis.map.qq.com/ws/geocoder/v1/?location=${latitude},${longitude}&key=${mapKey}`,
             success: res => {
-              console.log(res);
               self.city = res.data.result.ad_info.city;
               self.code = res.data.result.ad_info.adcode;
               self.county = res.data.result.ad_info.district;
@@ -151,8 +150,7 @@ export default {
         url: `https://apis.map.qq.com/ws/district/v1/getchildren?&id=${code}&key=${this.mapKey}`,
         success: function(res) {
           self.countyList = res.data.result[0];
-          console.log(res.data);
-          console.log('请求区县成功' + `https://apis.map.qq.com/ws/district/v1/getchildren?&id=${code}&key=${self.mapKey}`);
+          // console.log('请求区县成功' + `https://apis.map.qq.com/ws/district/v1/getchildren?&id=${code}&key=${self.mapKey}`);
         },
         fail: function() {
           console.log('请求区县失败，请重试');
